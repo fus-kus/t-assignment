@@ -23,8 +23,8 @@ export class ArticlesController {
     constructor(private readonly articlesService: ArticlesService) {}
 
     @Post()
-    create(@Body() createArticleDto: CreateArticleDto) {
-        return this.articlesService.create(createArticleDto);
+    create(@Body() articles: [CreateArticleDto]) {
+        return this.articlesService.create(articles);
     }
 
     @Get()
