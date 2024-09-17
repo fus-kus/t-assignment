@@ -4,7 +4,6 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from './entities/article.entity';
 import { FindManyOptions, Repository } from 'typeorm';
-import { Maybe, MaybeAsync } from 'purify-ts';
 
 @Injectable()
 export class ArticlesService {
@@ -14,9 +13,7 @@ export class ArticlesService {
     ) {}
 
     find(options?: FindManyOptions<Article>) {
-        return MaybeAsync.fromPromise(() =>
-            this.articleRepository.find(options).then(Maybe.fromNullable)
-        );
+        return this.articleRepository.find(options);
     }
 
     findAll(
@@ -24,17 +21,18 @@ export class ArticlesService {
             name: 'ASC',
         }
     ) {
-        return this.find({ order });
+        return this.find({ order, relations: { categories: true } });
     }
 
     create(createArticleDto: CreateArticleDto) {
         return this.articleRepository.save(createArticleDto);
     }
 
-    findOne(id: number): MaybeAsync<Article> {
-        return MaybeAsync.fromPromise(() =>
-            this.articleRepository.findOneBy({ id }).then(Maybe.fromNullable)
-        );
+    findOne(id: number) {
+        this.articleRepository.findOne({
+            where: { id },
+            relations: { categories: true },
+        });
     }
 
     update(id: number, updateArticleDto: UpdateArticleDto) {

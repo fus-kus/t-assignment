@@ -19,7 +19,7 @@ export class Article {
     priceAmount: string;
     @Column()
     priceCurrency: string;
-    @ManyToMany(() => Category, { cascade: ['insert'] })
+    @ManyToMany(() => Category)
     @JoinTable()
     categories: Category[];
 }
