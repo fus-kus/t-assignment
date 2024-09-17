@@ -6,10 +6,17 @@ import {
     Patch,
     Param,
     Delete,
+    Query,
 } from '@nestjs/common';
-import { ArticlesService } from './articles.service';
+import { ArticlesService, OrderOptions } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+
+interface SearchQuery {
+    order?: OrderOptions;
+    categories?: number[];
+    name?: string;
+}
 
 @Controller('articles')
 export class ArticlesController {
@@ -21,8 +28,11 @@ export class ArticlesController {
     }
 
     @Get()
-    findAll() {
-        return this.articlesService.findAll();
+    findAll(@Query() query: SearchQuery) {
+        return this.articlesService.findAll({
+            order: { name: 'ASC' },
+            ...query,
+        });
     }
 
     @Get(':id')
