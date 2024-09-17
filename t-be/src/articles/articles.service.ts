@@ -1,26 +1,47 @@
 import { Injectable } from '@nestjs/common';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Article } from './entities/article.entity';
+import { FindManyOptions, Repository } from 'typeorm';
+import { Maybe, MaybeAsync } from 'purify-ts';
 
 @Injectable()
 export class ArticlesService {
-  create(createArticleDto: CreateArticleDto) {
-    return 'This action adds a new article';
-  }
+    constructor(
+        @InjectRepository(Article)
+        private articleRepository: Repository<Article>
+    ) {}
 
-  findAll() {
-    return `This action returns all articles`;
-  }
+    find(options?: FindManyOptions<Article>) {
+        return MaybeAsync.fromPromise(() =>
+            this.articleRepository.find(options).then(Maybe.fromNullable)
+        );
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} article`;
-  }
+    findAll(
+        order: { name?: 'ASC' | 'DESC'; priceAmount?: 'ASC' | 'DESC' } = {
+            name: 'ASC',
+        }
+    ) {
+        return this.find({ order });
+    }
 
-  update(id: number, updateArticleDto: UpdateArticleDto) {
-    return `This action updates a #${id} article`;
-  }
+    create(createArticleDto: CreateArticleDto) {
+        return this.articleRepository.save(createArticleDto);
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} article`;
-  }
+    findOne(id: number): MaybeAsync<Article> {
+        return MaybeAsync.fromPromise(() =>
+            this.articleRepository.findOneBy({ id }).then(Maybe.fromNullable)
+        );
+    }
+
+    update(id: number, updateArticleDto: UpdateArticleDto) {
+        return this.articleRepository.update({ id }, updateArticleDto);
+    }
+
+    remove(id: number) {
+        return this.articleRepository.delete({ id });
+    }
 }
