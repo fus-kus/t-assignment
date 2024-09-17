@@ -40,8 +40,8 @@ export class ArticlesService {
         });
     }
 
-    create(createArticleDto: CreateArticleDto) {
-        return this.articleRepository.save(createArticleDto);
+    create(createArticleDtos: [CreateArticleDto]) {
+        return this.articleRepository.save(createArticleDtos);
     }
 
     findOne(id: number) {
