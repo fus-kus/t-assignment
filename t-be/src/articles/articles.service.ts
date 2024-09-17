@@ -36,7 +36,13 @@ export class ArticlesService {
         return this.find({
             order,
             relations: { categories: true },
-            where: { categories: { id: ArrayContains(categories) }, name },
+            where: {
+                categories:
+                    categories != null
+                        ? { id: ArrayContains(categories) }
+                        : null,
+                name,
+            },
         });
     }
 
@@ -45,7 +51,7 @@ export class ArticlesService {
     }
 
     findOne(id: number) {
-        this.articleRepository.findOne({
+        return this.articleRepository.findOne({
             where: { id },
             relations: { categories: true },
         });
