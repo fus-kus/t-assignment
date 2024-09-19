@@ -3,7 +3,7 @@
 </script>
 
 <div class="app">
-	<main>
+	<main class="m-auto max-w-5xl space-y-4 px-2 pt-4">
 		<slot></slot>
 	</main>
 
